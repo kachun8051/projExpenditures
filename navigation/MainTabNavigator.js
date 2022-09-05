@@ -15,6 +15,7 @@ import PrivateScreen from '../screens/PrivateScreen';
 
 import ExptypesScreen from '../exptypescreens/ExptypesScreen';
 import AddExptype from '../exptypescreens/AddExptype';
+import DeleteUpdateExptype from '../exptypescreens/DeleteUpdateExptype';
 
 import 'react-native-gesture-handler';
 
@@ -54,6 +55,15 @@ const MyExpTypeStack = () => {
         },
         headerTintColor: 'white',
       }}>
+      <ExpTypeStack.Screen
+        name="DeleteUpdateExpTypeStack" 
+        component={DeleteUpdateExptype} 
+        options={
+          () => ({
+            title: 'Delete/Update Expenditure Types',            
+          })
+        }
+      />
       <ExpTypeStack.Screen 
         name="AddExpTypeStack" 
         component={AddExptype} 
@@ -67,7 +77,7 @@ const MyExpTypeStack = () => {
         name="ExpTypeStack" 
         component={ExptypesScreen} 
         options={
-          ( { route, navigation } ) => ({
+          ( { navigation } ) => ({
             title: 'Expenditure Types',
             headerRight: () => (
               <Ionicons
@@ -105,7 +115,7 @@ PrivateStack.navigationOptions = {
   tabBarOptions: { showLabel: false }  
 };
 // export { MyHomeStack, MyLogInStack, MySignUpStack, MyRestorePasswordStack }
-
+/*
 const Tab = createBottomTabNavigator();
 
 const MyBottomTab = () => {
@@ -132,10 +142,10 @@ const MyBottomTab = () => {
           }} 
         />
       <Tab.Screen 
-          name="JobTypeArea" 
+          name="ExpTypeArea" 
           component={MyExpTypeStack}
           options={{
-            tabBarLabel: 'Job Type Area',
+            tabBarLabel: 'Expenditure Type Area',
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="home" color={color} size={26} />
             ),
@@ -144,12 +154,12 @@ const MyBottomTab = () => {
     </Tab.Navigator>
   );
 }
-
+*/
 const NewTab = createMaterialBottomTabNavigator();
 
 const MyBottomNewTab = () => {
   return (
-    <NewTab.Navigator backBehavior="history">
+    <NewTab.Navigator>
       <NewTab.Screen 
         name="Auth" 
         component={MyAuthStack}        
@@ -171,10 +181,10 @@ const MyBottomNewTab = () => {
           }} 
         />
       <NewTab.Screen 
-          name="JobTypeArea" 
+          name="ExpTypeArea" 
           component={MyExpTypeStack}
           options={{
-            tabBarLabel: 'Job Type Area',
+            tabBarLabel: 'Expenditure Type Area',
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="home" color={color} size={26} />
             ),
@@ -184,5 +194,5 @@ const MyBottomNewTab = () => {
   );
 }
 
-export { MyBottomNewTab, MyBottomTab };
+export { MyBottomNewTab };
 

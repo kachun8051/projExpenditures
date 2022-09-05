@@ -3,31 +3,54 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, } from 'react-nativ
 import { Alert } from 'react-native';
 import { useContext } from 'react';
 import { Parse } from 'parse/react-native';
-import {MaterialIcons} from '@expo/vector-icons';
+// import {MaterialIcons} from '@expo/vector-icons';
 
 // Custom Context API
 import { MyContext } from '../globalstates/MyModule';
 // Use global variable
 import DataHandler from "../globalstates/DataHandler";
 
-const ExptypesScreen = ( { route, navigation } ) => {
-
+const ExptypesScreen = ( { navigation } ) => {
     // State variable
     const [ queryResults, setQueryResults ] = useState(null);
     const [ loading, setLoading ] = useState(true);
     // get username variable and expenditure type from context i.e. global variable
     const { key_username, key_exptype } = useContext(MyContext);
     const [ globalUsername, setGlobalUsername ] = key_username;
-    // const [ globalExptype, setGlobalExptype ] = key_exptype;
-    
+    // add expenditure type
     const addExpType = (newExpType) => {    
       //newComment.key = Math.random().toString();
       setQueryResults( (currExpType) => {
         return [ newExpType, ...currExpType ];
       } );
-      //setModalOpen(false);
     }
-
+    // update an expenditure type from the array
+    const updateExpType = (newExpType) => {
+      setQueryResults(
+        (currExpType) => {
+          const newState = currExpType.map(
+            obj => {
+              // find by objectId
+              if (obj.objectId === newExpType.objectId) {
+                return newExpType;
+              }
+              // otherwise
+              return obj;    
+            }
+          );  
+          return newState;  
+        }
+      );
+    }
+    // remove an expenditure type from the array
+    const removeExpType = (_id) => {
+      setQueryResults(current =>
+        current.filter(obj => {
+          // remove object that has id equal to 2
+          return obj.objectId !== _id;
+        }),
+      );
+    };
     // convert the data from back4app to list of expenditure type object
     function converter(queriedStr){
       if (queriedStr === undefined || queriedStr === null || queriedStr === '' ){
@@ -52,7 +75,6 @@ const ExptypesScreen = ( { route, navigation } ) => {
             lstQuery.push(entry);
           }
           let json = JSON.stringify(lstQuery);
-          //let lstRectified = json.json();
           console.log("json: " + json);
           setQueryResults(lstQuery);
           console.log("length(2): " + lstQueried.length)
@@ -64,18 +86,18 @@ const ExptypesScreen = ( { route, navigation } ) => {
       }            
     }
 
-    const QueryJobTypes = async() => {
+    const QueryExpTypes = async() => {
         // Create our Parse.Query instance so methods can be chained
         // Reading parse objects is done by using Parse.Query
-        const parseQuery = new Parse.Query('JobTypes');
+        const parseQuery = new Parse.Query('ExpTypes');
         // let json = await response.json();
         console.log("parseQuery: " +  JSON.stringify(parseQuery));        
         parseQuery._addCondition('owner', '$eq', globalUsername);
     
         try {
-          let jobtypes = await parseQuery.find();
-          let jsonString = JSON.stringify(jobtypes);
-          console.log("jobtypes: " + jsonString);
+          let exptypes = await parseQuery.find();
+          let jsonString = JSON.stringify(exptypes);
+          console.log("exptypes: " + jsonString);
           converter(jsonString);  
           setLoading(false);        
           return true;
@@ -90,52 +112,59 @@ const ExptypesScreen = ( { route, navigation } ) => {
     // Similiar to componentDidMount
     useState(
       async() => {
-        console.log('JobtypesScreen.useState');
-        await QueryJobTypes();
+        console.log('exptypesScreen.useState');
+        await QueryExpTypes();
       }, []
     );
-    
+    // trigger when page is loaded
     useEffect(
       () => {
         const unsubscribe = navigation.addListener('focus', 
           () => {
             console.log('Refreshed (ExptypesScreen)!');
             let objExpType = DataHandler.getExpenditureType();
-            if (objExpType !== undefined && objExpType !== null ){
-              console.log("Method: " + objExpType.operation);
+            if (typeof objExpType !== 'undefined' && objExpType !== null ){
+              let Method_1 = objExpType.operation;
+              let ObjId_1 = objExpType.row.objectId;
+              console.log("Method: " + Method_1);
+              console.log("ObjectId: " + ObjId_1);
               switch (objExpType.operation) {
                 case 'added':
                   let objCloned = {
-                    objectId: objExpType.row.objectId,
+                    objectId: ObjId_1,
                     owner: objExpType.row.owner,
                     name: objExpType.row.name,
                     description: objExpType.row.description,
                     price: objExpType.row.price
                   };
+                  console.log("added with objectId: " + ObjId_1);
                   addExpType(objCloned);
                   // reset the global variable
                   DataHandler.setExpenditureType(null);
-              }
-            } 
-            /*
-            if (globalExptype !== undefined && globalExptype !== null) {
-              let method = globalExptype.operation;
-              switch (method) {
-                case 'added':
-                  console.log('method: ' + method);
-                  break;
-                case 'deleted':
-                  console.log('method: ' + method);
                   break;
                 case 'updated':
-                  console.log('method: ' + method);
+                  let objCloned2 = {
+                    objectId: ObjId_1,
+                    owner: objExpType.row.owner,
+                    name: objExpType.row.name,
+                    description: objExpType.row.description,
+                    price: objExpType.row.price
+                  };
+                  console.log("updating objectId: " + ObjId_1);
+                  updateExpType(objCloned2);
+                  // reset the global variable
+                  DataHandler.setExpenditureType(null);
+                  break;
+                case 'deleted':
+                  console.log("deleting objectId: " + ObjId_1);
+                  removeExpType(objExpType.row.objectId);
+                  // reset the global variable
+                  DataHandler.setExpenditureType(null);
                   break;
                 default:
-                  console.log('method: ' + method);
-                  break;
+                  console.log('ExptypesScreen - Error');
               }
             }
-            */
           }
         );
         return unsubscribe;
@@ -162,9 +191,14 @@ const ExptypesScreen = ( { route, navigation } ) => {
         } 
         else {
           return (
-            <TouchableOpacity onPress={()=>navigation.navigate('Detail', {
-              item: item
-            })}>
+            <TouchableOpacity onPress={
+              //() => navigation.navigate('DeleteUpdateExpTypeStack', {item: item})
+              () =>
+                navigation.navigate('ExpTypeArea', {
+                  screen: 'DeleteUpdateExpTypeStack',
+                  params: { row: item },
+                })              
+            }>
               <View
                 style={{
                   borderBottomWidth: 1,
@@ -173,6 +207,7 @@ const ExptypesScreen = ( { route, navigation } ) => {
                 }}>
                 <Text style={{ fontWeight: 'bold' }}>{item['name']}</Text>
                 <Text>{item['description']}</Text>
+                <Text>HK${item['price']}</Text>
               </View>
             </TouchableOpacity>
           );
@@ -191,12 +226,9 @@ const ExptypesScreen = ( { route, navigation } ) => {
     else {
       console.log("loading: " + loading);
       if (loading === false) {
-        console.log("Length of data: " + queryResults.length);
+        //console.log("Length of data: " + queryResults.length);
         return (
-          <View style={styles.container}>
-            <MaterialIcons 
-              name="add" size={24} style={styles.modalToggle} 
-              onPress={ () => navigation.navigate('AddJobTypeStack') } />
+          <View style={styles.container}>            
             <FlatList
               data={queryResults}
               renderItem={renderItem}

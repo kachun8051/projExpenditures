@@ -43,7 +43,7 @@ const AppNavigator = () => {
   return ( <DummyView2 /> );
   */
 
-  return ( <MyBottomTab /> )
+  return ( <MyBottomNewTab /> )
         
 }
 

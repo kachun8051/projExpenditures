@@ -1,18 +1,17 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, } from 'react-native';
-import { Alert } from 'react-native';
-//import { NavigationActions } from 'react-navigation';
+// import { Alert } from 'react-native';
 import Constants from 'expo-constants';
 import { Parse } from 'parse/react-native';
-
 // Custom Context API
 import { MyContext } from '../globalstates/MyModule';
 // Use global variable
 import DataHandler from "../globalstates/DataHandler";
 
+// create component 
 function AddExpType( { route, navigation } ) {
 
-    const [Jobtype, setJobtype] = useState({
+    const [Exptype, setExptype] = useState({
       owner: '', name: '', description: '', price: -1,
     });
     const [ nameError, setNameError ] = useState(null);    
@@ -20,7 +19,6 @@ function AddExpType( { route, navigation } ) {
     // get username variable and expenditure type from context i.e. global variable
     const { key_username, key_exptype } = useContext(MyContext);
     const [ globalUsername, setGlobalUsername ] = key_username;
-    //const [ globalExptype, setGlobalExptype ] = key_exptype;
 
     const goBackHandler = () => {
       navigation.goBack(null);
@@ -30,12 +28,13 @@ function AddExpType( { route, navigation } ) {
       () => {
         console.log('useState');
         console.log('globalUsername: ' + globalUsername);
-        setJobtype({ ...Jobtype, owner: globalUsername });
+        // get the username from context
+        setExptype({ ...Exptype, owner: globalUsername });
       }, []
     );
 
     const postAndClear = () => {
-      setJobtype({
+      setExptype({
         owner: '',
         name: '',
         description: '',
@@ -46,34 +45,34 @@ function AddExpType( { route, navigation } ) {
     }
 
     const onChangeName = (value) => {
-      setJobtype({ ...Jobtype, name: value });
+      setExptype({ ...Exptype, name: value });
     };
 
     const onChangeDescription = (value) => {
-      setJobtype({ ...Jobtype, description: value });
+      setExptype({ ...Exptype, description: value });
     };
 
     const onChangePrice = (value) => {
-      setJobtype({ ...Jobtype, price: value });
+      setExptype({ ...Exptype, price: value });
     };
     
     const validateIt = () => {
-      if (Jobtype.owner === undefined || Jobtype.name === undefined || Jobtype.description === undefined || Jobtype.price === undefined ) {
+      if (Exptype.owner === undefined || Exptype.name === undefined || Exptype.description === undefined || Exptype.price === undefined ) {
         return false;
       }
-      if (isNaN(Jobtype.price)) {
+      if (isNaN(Exptype.price)) {
         return false;
       }
-      if (Jobtype.owner.trim() === '') {
+      if (Exptype.owner.trim() === '') {
         return false;
       } 
-      if (Jobtype.name.trim() === '') {
+      if (Exptype.name.trim() === '') {
         return false;
       }
-      if (Jobtype.description.trim() === ''){
+      if (Exptype.description.trim() === ''){
         return false;
       }
-      if (Jobtype.price < 0){
+      if (Exptype.price < 0){
         return false;
       }
       return true;
@@ -87,41 +86,38 @@ function AddExpType( { route, navigation } ) {
       } 
       else {
         setLoading(true);
-        const clsJobTypes = Parse.Object.extend("JobTypes");
-        const objJobTypes = new clsJobTypes();
+        const clsExpTypes = Parse.Object.extend("ExpTypes");
+        const objExpTypes = new clsExpTypes();
 
-        objJobTypes.set("owner", Jobtype.owner);
-        objJobTypes.set("name", Jobtype.name);
-        objJobTypes.set("description", Jobtype.description);
-        objJobTypes.set("price", Jobtype.price);
+        objExpTypes.set("owner", Exptype.owner);
+        objExpTypes.set("name", Exptype.name);
+        objExpTypes.set("description", Exptype.description);
+        objExpTypes.set("price", parseFloat(Exptype.price));
 
-        return objJobTypes.save()
-          .then((_jobtype) => {
+        return objExpTypes.save()
+          .then(
+            (_exptype) => {
             // object id is unique and key for flatlist
-            let objid = _jobtype.id;
-
-            setLoading(false);
-            
-            let objExpType = {
+            let objid = _exptype.id;
+            // Success
+            //alert('New object created with objectId: ' + objid);
+            console.log('New object created with objectId: ' + objid);
+            setLoading(false);            
+            let objET = {
               operation: 'added',
               row: {
                 objectId: objid,
-                owner: Jobtype.owner,
-                name: Jobtype.name,
-                description: Jobtype.description,
-                price: parseFloat(Jobtype.price)
+                owner: Exptype.owner,
+                name: Exptype.name,
+                description: Exptype.description,
+                price: parseFloat(Exptype.price)
               }
             };            
-            DataHandler.setExpenditureType(objExpType);
-            postAndClear();
-            // Success
-            //alert('New object created with objectId: ' + _jobtype.id);
-            console.log('New object created with objectId: ' + _jobtype.id);
-            //navigation.navigate('JobTypeStack');
-            //navigation.goBack(null);
-            //goBackHandler();
+            DataHandler.setExpenditureType(objET);
+            postAndClear();            
             return true;
-          }, (error) => {
+            }, 
+            (error) => {
             // Save fails
             //alert('Failed to create new object, with error code: ' + error.message);
             console.log('Failed to create new object, with error code: ' + error.message);
@@ -129,8 +125,7 @@ function AddExpType( { route, navigation } ) {
           }).then( (res) => { if(res === true) { goBackHandler(); } } )
       }
     }
-    //return (<View><Text>ABC</Text></View>);
-    //setGlobalUsername('Wong Ka Chun');
+    
     if (globalUsername == '') {
       return (
         <View style={styles.container}>
@@ -147,7 +142,7 @@ function AddExpType( { route, navigation } ) {
           <TextInput
             placeholder={'Owner'}          
             style={styles.input}            
-            value={ Jobtype.owner }
+            value={ Exptype.owner }
             editable={false}
           />
           <Text>Expenditure Type Name</Text>
