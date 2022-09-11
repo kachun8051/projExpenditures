@@ -117,45 +117,8 @@ const DeleteUpdateExptype = ({ route, navigation }) => {
         console.log('Failed to delete object, with error code: ' + error.message);
         return false;
       }
-
-      const clsExpTypes = Parse.Object.extend("ExpTypes");
-      let obj = new Parse.Object("SoccerPlayer"); //new clsExpTypes();
-      let obj2 = obj.get('GbY5YajUqe');
-      let json = JSON.stringify(obj2);
-      console.log("json: " + json);
-      return;
-      // Retrieve the object by id            
-      obj.get(String(Exptype2.objectId)).then(  
-        (_exptype) => {
-          // The object was retrieved successfully and it is ready to update.
-          _exptype.destroy()
-          .then(
-            (_exptype2) => {
-              // The object was deleted from the Parse Cloud.
-              let objExpType = {
-                operation: 'deleted',
-                row: { objectId: Exptype2.objectId }
-              };            
-              DataHandler.setExpenditureType(objExpType);
-              postAndClear();
-              return true;
-            },
-            (error2) => {
-              // The delete failed.
-              // error is a Parse.Error with an error code and message.
-              console.log('Failed to delete object, with error code: ' + error2.message);
-              return false;
-            }
-          )
-        },
-        (error) => {
-          // The object was NOT retrieved successfully.
-          console.log('Failed to delete object, with error code: ' + error.message);
-              return false;
-        }
-      ).then( (res) => { if(res === true) { goBackHandler(); } } )
     }
-
+    // for test or debug only
     const updateData2 = () => {
       const SoccerPlayers = Parse.Object.extend("SoccerPlayers");
       const soccerPlayers = new SoccerPlayers();
@@ -210,7 +173,6 @@ const DeleteUpdateExptype = ({ route, navigation }) => {
             DataHandler.setExpenditureType(objEType);
             postAndClear();
               Alert.alert('Success!', 'ExpTypes updated!');
-
               // Refresh todos list to remove this one
               //readTodos();
               return true;
@@ -220,46 +182,10 @@ const DeleteUpdateExptype = ({ route, navigation }) => {
 
               return false;
             };
-
-            const objExpTypes = new clsExpTypes();
-            if (typeof objExpTypes === 'undefined') {
-              console.log('objExpTypes is undefined!');
-              return false;
-            }
-            // Retrieve the object by id            
-            objExpTypes.get(o_id).then(
-                ( _exptype ) => {
-                    // The object was retrieved successfully and it is ready to update.
-                    _exptype.set("name", Exptype2.name);
-                    _exptype.set("description", Exptype2.description);
-                    _exptype.set("price", parseFloat(Exptype2.price));
-                    _exptype.save();
-
-                    let objEType = {
-                        operation: 'updated',
-                        row: {
-                          objectId: Exptype2.objectId,
-                          owner: Exptype2.owner,
-                          name: Exptype2.name,
-                          description: Exptype2.description,
-                          price: parseFloat(Exptype2.price)
-                        }
-                      };            
-                    DataHandler.setExpenditureType(objEType);
-                    postAndClear();
-                    return true;
-                },
-                ( error ) => {
-                    // The object was not retrieved successfully.
-                    console.log('Failed to update object, with error code: ' + error.message);
-                    return false;
-                }
-            ).then( (res) => { if(res === true) { goBackHandler(); } } )
         }
     }
-
         
-      return (        
+    return (        
         <View style={styles.container}>
           <Text>Owner</Text>
           <TextInput
@@ -340,8 +266,7 @@ const DeleteUpdateExptype = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-      );
-    
+    );    
 }
 
 export default DeleteUpdateExptype;

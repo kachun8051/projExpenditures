@@ -101,7 +101,7 @@ function AddExpType( { route, navigation } ) {
             let objid = _exptype.id;
             // Success
             //alert('New object created with objectId: ' + objid);
-            console.log('New object created with objectId: ' + objid);
+            console.log('New object (ExpTypes) created with objectId: ' + objid);
             setLoading(false);            
             let objET = {
               operation: 'added',

@@ -1,9 +1,9 @@
 // import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 import { createStackNavigator } from '@react-navigation/stack';
-//import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 import HomeScreen from '../screens/HomeScreen';
@@ -16,6 +16,10 @@ import PrivateScreen from '../screens/PrivateScreen';
 import ExptypesScreen from '../exptypescreens/ExptypesScreen';
 import AddExptype from '../exptypescreens/AddExptype';
 import DeleteUpdateExptype from '../exptypescreens/DeleteUpdateExptype';
+
+import ExpScreen from '../expscreens/ExpScreen';
+import AddExp from '../expscreens/AddExp';
+import DeleteUpdateExp from '../expscreens/DeleteUpdateExp';
 
 import 'react-native-gesture-handler';
 
@@ -40,6 +44,65 @@ AuthStack.navigationOptions = {
   tabBarLabel: 'Home',
   tabBarVisible: false,
   tabBarOptions: { showLabel: false } 
+};
+
+const ExpStack = createStackNavigator();
+
+const MyExpStack = () => {
+  return (
+    <ExpStack.Navigator    
+      initialRouteName={'ExpStack'}
+      screenOptions={{
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: 'blue',
+        },
+        headerTintColor: 'white',
+      }}>
+      <ExpStack.Screen 
+        name="DeleteUpdateExpStack" 
+        component={DeleteUpdateExp} 
+        options={
+            () => ({
+              title: 'Delete/Update Expenditures',            
+            })
+        } 
+      />
+      <ExpStack.Screen 
+        name="AddExpStack" 
+        component={AddExp} 
+        options={
+          () => ({
+            title: 'Add Expenditures',            
+          })
+        } 
+      />    
+      <ExpStack.Screen 
+        name="ExpStack" 
+        component={ExpScreen} 
+        options={
+          ( { navigation } ) => ({
+            title: 'Expenditure',
+            headerRight: () => (
+              <Ionicons
+                name={'ios-add-circle'}
+                size={25}
+                color={'white'}
+                style={{ marginRight: 15 }}
+                onPress={() => navigation.navigate('AddExpStack')}
+              />
+            )
+          })
+        } 
+      />
+    </ExpStack.Navigator>
+  );  
+}
+
+ExpStack.navigationOptions = {
+  tabBarLabel: 'Expenditure',
+  tabBarVisible: true,
+  tabBarOptions: { showLabel: true } 
 };
 
 const ExpTypeStack = createStackNavigator();
@@ -115,46 +178,7 @@ PrivateStack.navigationOptions = {
   tabBarOptions: { showLabel: false }  
 };
 // export { MyHomeStack, MyLogInStack, MySignUpStack, MyRestorePasswordStack }
-/*
-const Tab = createBottomTabNavigator();
 
-const MyBottomTab = () => {
-  return (
-    <Tab.Navigator backBehavior="history">
-      <Tab.Screen 
-        name="Auth" 
-        component={MyAuthStack}        
-        options={{
-          tabBarLabel: 'Home',
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={26} />
-          ),
-        }}           
-      />
-      <Tab.Screen 
-          name="PrivateArea" 
-          component={MyPrivateStack}
-          options={{
-            tabBarLabel: 'Private Area',
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="home" color={color} size={26} />
-            ),
-          }} 
-        />
-      <Tab.Screen 
-          name="ExpTypeArea" 
-          component={MyExpTypeStack}
-          options={{
-            tabBarLabel: 'Expenditure Type Area',
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="home" color={color} size={26} />
-            ),
-          }} 
-        />
-    </Tab.Navigator>
-  );
-}
-*/
 const NewTab = createMaterialBottomTabNavigator();
 
 const MyBottomNewTab = () => {
@@ -179,7 +203,7 @@ const MyBottomNewTab = () => {
               <MaterialCommunityIcons name="home" color={color} size={26} />
             ),
           }} 
-        />
+      />
       <NewTab.Screen 
           name="ExpTypeArea" 
           component={MyExpTypeStack}
@@ -189,7 +213,17 @@ const MyBottomNewTab = () => {
               <MaterialCommunityIcons name="home" color={color} size={26} />
             ),
           }} 
-        />
+      />
+      <NewTab.Screen 
+          name="ExpArea" 
+          component={MyExpStack}
+          options={{
+            tabBarLabel: 'Expenditure Area',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="home" color={color} size={26} />
+            ),
+          }} 
+      />
     </NewTab.Navigator>
   );
 }

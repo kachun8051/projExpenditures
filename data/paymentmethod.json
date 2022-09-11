@@ -1,0 +1,10 @@
+[
+    {"label": "Cash", "value": "cash"},
+    {"label": "Credit Card", "value": "creditcard"},
+    {"label": "Master Card", "value": "mastercard"},
+    {"label": "Octopus", "value": "octopus"},
+    {"label": "Alipay", "value": "alipay"},
+    {"label": "WeChatPay", "value": "wechatpay"},
+    {"label": "e-transfer", "value": "e-transfer"},
+    {"label": "other", "value": "other"}
+]

@@ -8,7 +8,7 @@ import { MyBottomNewTab, MyBottomTab } from './MainTabNavigator';
 
 const AppNav = () => {
   return (    
-      <Text>AppNav Demo! 👋</Text>
+      <Text>AppNav Demo!</Text>
   );
 }
 
@@ -17,25 +17,25 @@ const AppNavigator = () => {
   
   /*
   return (      
-    <Text>AppNavigator Demo! 👋</Text>      
+    <Text>AppNavigator Demo!</Text>      
   );
   */
 
   /*
   const DummyView = () => {    
     return(      
-      <Text>AppNavigator DummyView Demo! 👋</Text>            
+      <Text>AppNavigator DummyView Demo!</Text>            
     );        
   }
 
   const DummyView2 = () => {
     if (username == '') {
       return(
-        <Text>AppNavigator Demo for everyone ! 👋</Text>
+        <Text>AppNavigator Demo for everyone !</Text>
       );
     } else {
       return(
-        <Text>AppNavigator Demo for { username } ! 👋</Text>
+        <Text>AppNavigator Demo for { username } !</Text>
       );
     }        
   }
