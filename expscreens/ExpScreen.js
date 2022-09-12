@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Button } from 'react-native';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { Alert } from 'react-native';
 import Constants from 'expo-constants';
 import { useContext } from 'react';
 import { Parse } from 'parse/react-native';
 // import custom datetime object
-import { getDateTimeToString } from '../globalstates/MyDateTime';
+import { getDateTimeToString, getDate4Shown } from '../globalstates/MyDateTime';
 
 // Custom Context API
 import { MyContext } from '../globalstates/MyModule';
@@ -19,7 +20,11 @@ const ExpScreen = ( { navigation } ) => {
   const [ globalUsername, setGlobalUsername ] = key_username;
   const [ loading, setLoading ] = useState(true);
   // State variable
-  const [ queryResults, setQueryResults ] = useState(null);  
+  const [ queryResults, setQueryResults ] = useState(null);
+  
+  const [ExpDate, setExpDate ] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
   console.log("ExpScreen loading ...");
 
   
@@ -29,6 +34,33 @@ const ExpScreen = ( { navigation } ) => {
     setQueryResults( (currExp) => {
       return [ newExp, ...currExp ];
     } );
+  }
+  // remove an expenditure from the array
+  const removeExpType = (_id) => {
+    setQueryResults(current =>
+      current.filter(obj => {
+        // remove object that has id equal to 2
+        return obj.objectId !== _id;
+      }),
+    );
+  };
+  // update an expenditure type from the array
+  const updateExp = (newExp) => {
+    setQueryResults(
+      (currExp) => {
+        const newState = currExp.map(
+          obj => {
+            // find by objectId
+            if (obj.objectId === newExp.objectId) {
+              return newExp;
+            }
+            // otherwise
+            return obj;    
+          }
+        );  
+        return newState;  
+      }
+    );
   }
 
   function converter(queriedStr){
@@ -75,9 +107,9 @@ const ExpScreen = ( { navigation } ) => {
   // Reading parse objects is done by using Parse.Query
   const parseQuery = new Parse.Query('Expenditure');
     // let json = await response.json();
-    const dtTarget1 = new Date('2022/09/12');
+    const dtTarget1 = new Date( ExpDate ); //ExpDate is in format yyyy/MM/dd
     // add a day
-    const dtTarget2 = new Date('2022/09/12');
+    const dtTarget2 = new Date(ExpDate);
     dtTarget2.setDate(dtTarget2.getDate()+1);
     console.log("dtTarget1: " + dtTarget1);
     console.log("dtTarget2: " + dtTarget2);
@@ -143,9 +175,11 @@ const ExpScreen = ( { navigation } ) => {
                     let objCloned2 = {
                       objectId: ObjId_1,
                       owner: objExp.row.owner,
-                      name: objExp.row.name,
+                      payment: objExp.row.payment,
+                      category: objExp.row.category,
                       description: objExp.row.description,
-                      price: objExp.row.price
+                      price: objExp.row.price,
+                      paymentdt: objExp.row.paymentdt
                     };
                     console.log("updating objectId: " + ObjId_1);
                     updateExp(objCloned2);
@@ -156,10 +190,10 @@ const ExpScreen = ( { navigation } ) => {
                     console.log("deleting objectId: " + ObjId_1);
                     removeExpType(objExp.row.objectId);
                     // reset the global variable
-                    DataHandler.setExpenditureType(null);
+                    DataHandler.setExpenditure(null);
                     break;
                   default:
-                    console.log('ExptypesScreen - Error');
+                    console.log('ExpScreen - Error');
                 }
               }
             }
@@ -201,11 +235,11 @@ const ExpScreen = ( { navigation } ) => {
               borderBottomColor: '#ccc',
               padding: 5,
             }}>
-            <Text style={{ fontWeight: 'bold' }}>{item['category']}</Text>
-            <Text>{item['payment']}</Text>
-            <Text>{ item['paymentdt'] }</Text>
-            <Text>{item['description']}</Text>
-            <Text>HK${item['price']}</Text>
+            <Text style={{ fontWeight: 'bold' }}>Category: {item['category']}</Text>
+            <Text>Payment Method: { item['payment'] }</Text>
+            <Text>Payment At: { item['paymentdt'] }</Text>
+            <Text>Description: { item['description'] }</Text>
+            <Text>Amount: HK${ item['price'] }</Text>
           </View>
         </TouchableOpacity>
       );
@@ -227,6 +261,21 @@ const ExpScreen = ( { navigation } ) => {
       //console.log("Length of data: " + queryResults.length);
       return (
         <View style={styles.container}>
+          <Text style={styles.header}>Expenditure</Text>
+          <Button style={styles.button} title='Date' color='green' onPress={() => { setShowDatePicker(true) }} />
+            {
+              showDatePicker && (
+                <RNDateTimePicker
+                  value={new Date()}
+                  mode='date'
+                  onChange={(event, date) => {
+                    setShowDatePicker(false);
+                    setExpDate(date);
+                    //QueryStat();
+                    QueryExp();
+                  }} />)
+            }
+          <Text style={styles.textBox}>Query Expenditures at: {getDate4Shown(ExpDate)}</Text>
           {loading ? <ActivityIndicator /> : null}            
           <FlatList
             data={queryResults}
@@ -234,8 +283,7 @@ const ExpScreen = ( { navigation } ) => {
             keyExtractor={(item) => item.objectId}
             refreshControl={
               <RefreshControl refreshing={loading} onRefresh={QueryExp} />
-            }
-          />
+            } />
         </View>
       );          
     } 
@@ -266,5 +314,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  header: {
+    textAlign: 'center',
+    fontSize: 18,
+    padding: 16
   },
 });

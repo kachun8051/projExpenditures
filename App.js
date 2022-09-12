@@ -7,7 +7,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import Entypo from '@expo/vector-icons/Entypo';
 
-import { applicationId, javascriptKey, serverURL } from './constants/Keys';
+import { applicationId, javascriptKey, masterKey, serverURL } from './constants/Keys';
 import Parse from "parse/react-native.js";
 
 import AppNavigator from './navigation/AppNavigator';
@@ -21,6 +21,7 @@ import { NavigationContainer } from '@react-navigation/native';
 
 Parse.setAsyncStorage(AsyncStorage);
 Parse.initialize(applicationId, javascriptKey);
+Parse.masterKey = masterKey;
 Parse.serverURL = serverURL;
 
 export default function App() {

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, } from 'react-nativ
 import { Alert } from 'react-native';
 import { useContext } from 'react';
 import { Parse } from 'parse/react-native';
-// import {MaterialIcons} from '@expo/vector-icons';
+import Constants from 'expo-constants';
 
 // Custom Context API
 import { MyContext } from '../globalstates/MyModule';
@@ -205,9 +205,9 @@ const ExptypesScreen = ( { navigation } ) => {
                   borderBottomColor: '#ccc',
                   padding: 5,
                 }}>
-                <Text style={{ fontWeight: 'bold' }}>{item['name']}</Text>
-                <Text>{item['description']}</Text>
-                <Text>HK${item['price']}</Text>
+                <Text style={{ fontWeight: 'bold' }}>Category: {item['name']}</Text>
+                <Text>Description: {item['description']}</Text>
+                <Text>Amount: HK${item['price']}</Text>
               </View>
             </TouchableOpacity>
           );
@@ -251,11 +251,18 @@ const ExptypesScreen = ( { navigation } ) => {
 
 export default ExptypesScreen;
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({    
     container: {
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#fff',
+      paddingTop: Constants.statusBarHeight,
+      backgroundColor: '#ecf0f1',
+      padding: 8,
+    },
+    paragraph: {
+      margin: 24,
+      fontSize: 18,
+      fontWeight: 'bold',
+      textAlign: 'center',
     },
   });

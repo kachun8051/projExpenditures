@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, } from 'react-native';
-
+// cloud api library
 import { Parse } from 'parse/react-native';
-
 // Use global variable
 import DataHandler from "../globalstates/DataHandler";
 
@@ -82,7 +81,7 @@ const DeleteUpdateExptype = ({ route, navigation }) => {
         }
         return true;
     }
-
+    // readObject is used to see specific (i.e., hard-coded) object 
     const readObject = async() => {
       //Reading your First Data Object from Back4App
       const query = new Parse.Query("ExpTypes");  
@@ -100,14 +99,14 @@ const DeleteUpdateExptype = ({ route, navigation }) => {
       // objectId is a key (i.e., unique) of row entry
       let o_id = String(Exptype2.objectId);
       console.log('Object id (removeData): ' + o_id);
-      const exp = new Parse.Object('ExpTypes');
-      exp.set('objectId', o_id);
+      const exptypes_1 = new Parse.Object('ExpTypes');
+      exptypes_1.set('objectId', o_id);
       try{
-        await exp.destroy();
+        await exptypes_1.destroy();
         // The object was deleted from the Parse Cloud.
         let objExpType = {
           operation: 'deleted',
-          row: { objectId: Exptype2.objectId }
+          row: { objectId: o_id }
         };            
         DataHandler.setExpenditureType(objExpType);
         postAndClear();
@@ -136,7 +135,7 @@ const DeleteUpdateExptype = ({ route, navigation }) => {
           return false;
         });
     }
-
+    // https://www.back4app.com/docs/react-native/parse-sdk/data-objects/react-native-crud-tutorial
     const updateData = async() => {
         if ( validateIt() === false ) {
             setNameError(`Fill the fields correctly.`);
@@ -256,14 +255,15 @@ const DeleteUpdateExptype = ({ route, navigation }) => {
                 </Text>
               </View>
             </TouchableOpacity>
-
-            <TouchableOpacity onPress={ () => readObject() }>
-              <View style={{ backgroundColor: 'yellow', padding: 10, margin: 10 }}>
-                <Text style={{ color: 'white', textAlign: 'center' }}>
-                  Read Object
-                </Text>
-              </View>
-            </TouchableOpacity>
+            { false && 
+                <TouchableOpacity onPress={ () => readObject() }>
+                <View style={{ backgroundColor: 'yellow', padding: 10, margin: 10 }}>
+                  <Text style={{ color: 'white', textAlign: 'center' }}>
+                    Read Object
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            }            
           </View>
         </View>
     );    

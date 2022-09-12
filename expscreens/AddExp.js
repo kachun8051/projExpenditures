@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert, Button, } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
@@ -273,7 +273,7 @@ function AddExp( { route, navigation } ) {
                   />
                 </View>                                
               }
-              <View>
+              <View style={{ marginTop: 20 }}>
                 <Button style={styles.button} title='Date' color='green' onPress={() => { setShowDatePicker(true) }} />
                 {
                   showDatePicker && (

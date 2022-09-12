@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { ScrollView, StyleSheet, Text, View, Button } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Button, Image } from 'react-native';
 import { Parse } from "parse/react-native";
 // Custom Context API
 import { MyContext } from '../globalstates/MyModule';
@@ -44,17 +44,18 @@ function HomeScreen( {route, navigation} ){
     return currentUser;
   };
 
+  const screenPic = require('../assets/android/drawable-hdpi/Expenditures.png');
+
   return (
+
     <View style={styles.container}>
       <ScrollView
           style={styles.container}
           contentContainerStyle={styles.contentContainer}>
           <View style={styles.welcomeContainer}>
-              <Text>Home Screen</Text>
+              <Text style={styles.header}>Home Screen</Text>
               <Text>Hello, {globalUsername}</Text>
-              <Text>Home Screen 2B</Text>
-              <Text>Home Screen 2B</Text>
-              <Text>Home Screen 2B</Text>
+              <Image source={screenPic} style={{ width: 330, height: 330, marginBottom: 30 }} />
               <Button
                 title="Log Out"
                 onPress={() => UserLogOut() }
@@ -79,5 +80,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 20,
-  }
+  },
+  header: {
+    textAlign: 'center',
+    fontSize: 18,
+    padding: 16
+  },
 });

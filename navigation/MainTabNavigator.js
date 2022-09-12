@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -20,6 +21,9 @@ import DeleteUpdateExptype from '../exptypescreens/DeleteUpdateExptype';
 import ExpScreen from '../expscreens/ExpScreen';
 import AddExp from '../expscreens/AddExp';
 import DeleteUpdateExp from '../expscreens/DeleteUpdateExp';
+
+import StatisticDemoScreen from '../statscreens/StatisticDemoScreen';
+import StatisticScreen from '../statscreens/StatisticScreen';
 
 import 'react-native-gesture-handler';
 
@@ -177,7 +181,20 @@ PrivateStack.navigationOptions = {
   tabBarVisible: false,
   tabBarOptions: { showLabel: false }  
 };
-// export { MyHomeStack, MyLogInStack, MySignUpStack, MyRestorePasswordStack }
+
+const StatisticStack = createStackNavigator();
+
+const MyStatisticStack = () => {
+  return (
+    <StatisticStack.Navigator 
+      initialRouteName={'StatisticStack'}
+      screenOptions={{
+      headerShown: false
+    }}>      
+      <StatisticStack.Screen name="StatisticScreen" component={StatisticScreen} />
+    </StatisticStack.Navigator>
+  );
+}
 
 const NewTab = createMaterialBottomTabNavigator();
 
@@ -193,24 +210,14 @@ const MyBottomNewTab = () => {
             <MaterialCommunityIcons name="home" color={color} size={26} />
           ),
         }}           
-      />
-      <NewTab.Screen 
-          name="PrivateArea" 
-          component={MyPrivateStack}
-          options={{
-            tabBarLabel: 'Private Area',
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="home" color={color} size={26} />
-            ),
-          }} 
-      />
+      />      
       <NewTab.Screen 
           name="ExpTypeArea" 
           component={MyExpTypeStack}
           options={{
             tabBarLabel: 'Expenditure Type Area',
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="home" color={color} size={26} />
+              <MaterialCommunityIcons name="view-dashboard-edit-outline" color={color} size={26} />
             ),
           }} 
       />
@@ -220,7 +227,17 @@ const MyBottomNewTab = () => {
           options={{
             tabBarLabel: 'Expenditure Area',
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="home" color={color} size={26} />
+              <MaterialCommunityIcons name="wallet" color={color} size={26} />
+            ),
+          }} 
+      />
+      <NewTab.Screen 
+          name="StatisticArea" 
+          component={MyStatisticStack}
+          options={{
+            tabBarLabel: 'Statistics Area',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="finance" color={color} size={26} />
             ),
           }} 
       />
