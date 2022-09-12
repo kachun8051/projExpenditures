@@ -91,6 +91,14 @@ function getDateFromString( str ) {
     return dt;
 }
 
+// get Now concerning year, month and day only
+// with time as 00:00:00
+const getNowAtZero = () => {
+    const dt = new Date();
+    dt.setHours(0, 0, 0, 0);
+    return dt;
+}
+
 function leadingZero( input ) {
     if (isNaN(input) == true ) {
         return input;
@@ -101,4 +109,6 @@ function leadingZero( input ) {
     return input;
 }
 
-export { getDate4Shown, getTime4Shown, getDateTimeToString, getDateAndTimeToObject, getDateFromString }
+
+
+export { getDate4Shown, getTime4Shown, getDateTimeToString, getDateAndTimeToObject, getDateFromString, getNowAtZero }

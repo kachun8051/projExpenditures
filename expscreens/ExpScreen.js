@@ -6,7 +6,7 @@ import Constants from 'expo-constants';
 import { useContext } from 'react';
 import { Parse } from 'parse/react-native';
 // import custom datetime object
-import { getDateTimeToString, getDate4Shown } from '../globalstates/MyDateTime';
+import { getDateTimeToString, getDate4Shown, getNowAtZero } from '../globalstates/MyDateTime';
 
 // Custom Context API
 import { MyContext } from '../globalstates/MyModule';
@@ -107,9 +107,13 @@ const ExpScreen = ( { navigation } ) => {
   // Reading parse objects is done by using Parse.Query
   const parseQuery = new Parse.Query('Expenditure');
     // let json = await response.json();
-    const dtTarget1 = new Date( ExpDate ); //ExpDate is in format yyyy/MM/dd
+    const dtTarget1 = new Date(ExpDate); //ExpDate is in format yyyy/MM/dd
+    // make the time to 00:00:00
+    dtTarget1.setHours(0, 0, 0, 0);
     // add a day
     const dtTarget2 = new Date(ExpDate);
+    // make the time to 00:00:00
+    dtTarget2.setHours(0, 0, 0, 0);
     dtTarget2.setDate(dtTarget2.getDate()+1);
     console.log("dtTarget1: " + dtTarget1);
     console.log("dtTarget2: " + dtTarget2);
@@ -270,7 +274,7 @@ const ExpScreen = ( { navigation } ) => {
                   mode='date'
                   onChange={(event, date) => {
                     setShowDatePicker(false);
-                    setExpDate(date);
+                    setExpDate(date.setHours(0, 0, 0, 0));
                     //QueryStat();
                     QueryExp();
                   }} />)

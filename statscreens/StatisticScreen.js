@@ -1,5 +1,5 @@
 // import React in our code
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useFocusEffect } from 'react';
 
 // import all the components we are going to use
 import { SafeAreaView, Text, View, StyleSheet, Dimensions, ScrollView, Button } from 'react-native';
@@ -40,7 +40,7 @@ const StatisticScreen = () => {
     for(let i = 0; i<len; i++){
       let obj = {
         id: i,
-        name: queriedResult[i].objectId.payment,
+        name: queriedResult[i].objectId.category,
         amount: queriedResult[i].subtotal,
         color: lstColor[i%lstColor.length],
         legendFontColor: '#7F7F7F',
@@ -55,14 +55,19 @@ const StatisticScreen = () => {
     // Create our Parse.Query instance so methods can be chained
     // Reading parse objects is done by using Parse.Query
     const parseQuery = new Parse.Query('Expenditure');
+
     // add a month
-    const dtTarget1 = new Date('2022/09/01');
-    const dtTarget2 = new Date('2022/09/01');
-    dtTarget2.setMonth(dtTarget2.getMonth()+1);
+    //const dtTarget1 = new Date('2022/09/01');
+    //const dtTarget2 = new Date('2022/09/01');
+    //dtTarget2.setMonth(dtTarget2.getMonth()+1);
 
     // add a day
     const dtTarget_1 = new Date(ExpDate); // ExpDate is in format yyyy/MM/dd
+    // make the Time as 00:00:00
+    dtTarget_1.setHours(0, 0, 0, 0);
     const dtTarget_2 = new Date(ExpDate);
+    // make the Time as 00:00:00
+    dtTarget_2.setHours(0, 0, 0, 0);
     dtTarget_2.setDate(dtTarget_2.getDate()+1);
 
     // console.log("parseQuery(1): " +  JSON.stringify(parseQuery));
@@ -73,7 +78,7 @@ const StatisticScreen = () => {
         owner: globalUsername
       },
       group: {
-        objectId: { "payment" :"$payment"},
+        objectId: { "category" :"$category"},
         subtotal: { $sum: '$price' }, // 'subtotal' will be a created field to hold the sum of price field
       },
     };
@@ -86,25 +91,31 @@ const StatisticScreen = () => {
       const results = await parseQuery.aggregate(pipeline);
       console.log(`Aggregated results: ${JSON.stringify(results)}`);
       converter(results);
+      setLoading(false);
       return true;
     } catch (error) {
       console.log(`Error: ${error}`);
       setLoading(true);
       return false;
-    }
-  
+    }  
   }; 
 
   // Similiar to componentDidMount
   useState(
-    async() => {
-        setLoading(true);
+    async() => {        
         console.log('StatisticScreen.useState');
         await QueryStat();
-        setLoading(false);
       }, []
   );
-
+  /*
+  useFocusEffect(
+    React.useCallback(
+      async() => {
+        console.log('StatisticScreen.useFocusEffect');
+        await QueryStat();
+    }, [])
+  );
+  */
   const MyPieChart = () => {
     return (
       <>
