@@ -107,13 +107,12 @@ const ExpScreen = ( { navigation } ) => {
   // Reading parse objects is done by using Parse.Query
   const parseQuery = new Parse.Query('Expenditure');
     // let json = await response.json();
-    const dtTarget1 = new Date(ExpDate); //ExpDate is in format yyyy/MM/dd
-    // make the time to 00:00:00
-    dtTarget1.setHours(0, 0, 0, 0);
+    // ExpDate's data type is Date object
+    console.log("parseQuery...");
+    console.log("ExpDate.getDate(): " + ExpDate.getDate());
+    let dtTarget1 = new Date(ExpDate.getFullYear(), ExpDate.getMonth(), ExpDate.getDate(), 0, 0, 0);    
+    let dtTarget2 = new Date(ExpDate.getFullYear(), ExpDate.getMonth(), ExpDate.getDate(), 0, 0, 0);
     // add a day
-    const dtTarget2 = new Date(ExpDate);
-    // make the time to 00:00:00
-    dtTarget2.setHours(0, 0, 0, 0);
     dtTarget2.setDate(dtTarget2.getDate()+1);
     console.log("dtTarget1: " + dtTarget1);
     console.log("dtTarget2: " + dtTarget2);
@@ -145,8 +144,13 @@ const ExpScreen = ( { navigation } ) => {
       await QueryExp();
     }, []
   );
-  
-  // trigger when page is loaded
+  // useEffect detect the ExpDate is updated 
+  useEffect(() => {
+    console.log('updated ExpDate:', ExpDate)
+    QueryExp();
+  }, [ExpDate])
+
+  // useEffect detect the navigation is updated i.e., when page is loaded
   useEffect(
     () => {
       const unsubscribe = navigation.addListener('focus', 
@@ -270,16 +274,18 @@ const ExpScreen = ( { navigation } ) => {
             {
               showDatePicker && (
                 <RNDateTimePicker
-                  value={new Date()}
+                  value={ExpDate}
                   mode='date'
                   onChange={(event, date) => {
                     setShowDatePicker(false);
-                    setExpDate(date.setHours(0, 0, 0, 0));
-                    //QueryStat();
-                    QueryExp();
+                    date.setHours(0, 0, 0, 0);
+                    console.log("onChange: " + date);
+                    setExpDate(date);
+                    // trigger useEffect
+                    //QueryExp();
                   }} />)
             }
-          <Text style={styles.textBox}>Query Expenditures at: {getDate4Shown(ExpDate)}</Text>
+          <Text style={styles.textBox}>Query Expenditures at: { getDate4Shown(ExpDate) }</Text>
           {loading ? <ActivityIndicator /> : null}            
           <FlatList
             data={queryResults}

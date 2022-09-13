@@ -17,7 +17,7 @@ import { getDate4Shown, } from "../globalstates/MyDateTime";
 //expo install react-native-chart-kit
 //expo install react-native-svg
 
-const StatisticScreen = () => {
+const StatisticScreen = ( {navigation} ) => {
   
   // get username variable and expenditure type from context i.e. global variable
   const { key_username, key_exptype } = useContext(MyContext);
@@ -62,12 +62,12 @@ const StatisticScreen = () => {
     //dtTarget2.setMonth(dtTarget2.getMonth()+1);
 
     // add a day
-    const dtTarget_1 = new Date(ExpDate); // ExpDate is in format yyyy/MM/dd
+    let dtTarget_1 = new Date(ExpDate.getFullYear(), ExpDate.getMonth(), ExpDate.getDate(), 0, 0, 0); // new Date(ExpDate); // ExpDate is in format yyyy/MM/dd
     // make the Time as 00:00:00
-    dtTarget_1.setHours(0, 0, 0, 0);
-    const dtTarget_2 = new Date(ExpDate);
+    //dtTarget_1.setHours(0, 0, 0, 0);
+    let dtTarget_2 = new Date(ExpDate.getFullYear(), ExpDate.getMonth(), ExpDate.getDate(), 0, 0, 0);
     // make the Time as 00:00:00
-    dtTarget_2.setHours(0, 0, 0, 0);
+    //dtTarget_2.setHours(0, 0, 0, 0);
     dtTarget_2.setDate(dtTarget_2.getDate()+1);
 
     // console.log("parseQuery(1): " +  JSON.stringify(parseQuery));
@@ -99,23 +99,27 @@ const StatisticScreen = () => {
       return false;
     }  
   }; 
+    
+  // useEffect detect the ExpDate is updated 
+  useEffect(() => {
+    console.log('updated ExpDate:', ExpDate)
+    //QueryExp();
+    QueryStat();
+  }, [ExpDate])
+  // trigger when screen got focus
+  // reference: https://reactnavigation.org/docs/function-after-focusing-screen/
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.log('Statistic Screen is focused');
+      // The screen is focused
+      // Call any action
+      setExpDate(new Date());
+    });
 
-  // Similiar to componentDidMount
-  useState(
-    async() => {        
-        console.log('StatisticScreen.useState');
-        await QueryStat();
-      }, []
-  );
-  /*
-  useFocusEffect(
-    React.useCallback(
-      async() => {
-        console.log('StatisticScreen.useFocusEffect');
-        await QueryStat();
-    }, [])
-  );
-  */
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, []);
+
   const MyPieChart = () => {
     return (
       <>
@@ -124,12 +128,14 @@ const StatisticScreen = () => {
                 {
                   showDatePicker && (
                     <RNDateTimePicker
-                      value={new Date()}
+                      value={ExpDate}
                       mode='date'
                       onChange={(event, date) => {
                         setShowDatePicker(false);
+                        //date.setHours(0,0,0,0);
                         setExpDate(date);
-                        QueryStat();
+                        // trigger useEffect
+                        //QueryStat();
                       }}
                     />)
                 }
@@ -137,7 +143,7 @@ const StatisticScreen = () => {
         <PieChart
           data={chartData}
           width={Dimensions.get('window').width - 16}
-          height={340}
+          height={250}
           chartConfig={{
             backgroundColor: '#1cc910',
             backgroundGradientFrom: '#eff3ff',
@@ -157,6 +163,7 @@ const StatisticScreen = () => {
           paddingLeft="15"
           absolute //for the absolute number remove if you want percentage
         />
+        <Button style={styles.button} title='Refresh' color='orange' onPress={() => { QueryStat() }} />
       </>
     );
   };

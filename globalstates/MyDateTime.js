@@ -1,37 +1,51 @@
 // input date object and return string
 function getDate4Shown( _d ) {
-    if (typeof _d === 'undefined') {
+    if (typeof(_d) === 'undefined') {
+        console.log("getDate4Shown: \n" + "input is undefined!");
         return '';
     }
-    // make sure _d is date object
-    let yr = _d.getFullYear();
-    let mon = _d.getMonth() + 1;
-    let dy = _d.getDate();
-    // leading zero
-    let mon_2 = leadingZero(mon);
-    let dy_2 = leadingZero(dy);
-    let str = yr + '/' + mon_2 + '/' + dy_2;
-    console.log("getDate4Shown: " + str);
-    // return the string for shown
-    return str;
+    try {
+        // make sure _d is date object
+        let yr = _d.getFullYear();
+        let mon = _d.getMonth() + 1;
+        let dy = _d.getDate();
+        // leading zero
+        let mon_2 = leadingZero(mon);
+        let dy_2 = leadingZero(dy);
+        //let str = yr + '/' + mon_2 + '/' + dy_2;
+        let str_1 = [yr, mon_2, dy_2].join('/');
+        console.log("getDate4Shown: " + str_1);
+        // return the string for shown
+        return str_1;
+    } catch (error) {
+        console.log("getDate4Shown: \n" + error);
+        console.log("input d: " + _d);
+        return "1970/01/01";
+    }    
 }
 
 function getTime4Shown( _t ) {
 
-    if (typeof _t === 'undefined') {
+    if (typeof(_t) === 'undefined') {
+        console.log("getTime4Shown: \n" + "input is undefined!");
         return '';
     }
-    // make sure _t is date object
-    // jobStartTime.getHours() + ':' + jobStartTime.getMinutes();
-    let hr = _t.getHours();
-    let min = _t.getMinutes();
-    // leading zero
-    let hr_2 = leadingZero(hr);
-    let min_2 = leadingZero(min);
-    let str = hr_2 + ':' + min_2;
-    console.log("getTime4Shown: " + str);
-    // return the string for shown
-    return str;
+    try {
+        // make sure _t is date object
+        // jobStartTime.getHours() + ':' + jobStartTime.getMinutes();
+        let hr = _t.getHours();
+        let min = _t.getMinutes();
+        // leading zero
+        let hr_2 = leadingZero(hr);
+        let min_2 = leadingZero(min);
+        let str = hr_2 + ':' + min_2;
+        console.log("getTime4Shown: " + str);
+        // return the string for shown
+        return str;
+    } catch (error) {
+        console.log("getTime4Shown: \n" + error);
+        return "00:00";
+    }    
 }
 
 // convert datetime object from cloud database to string
@@ -56,18 +70,23 @@ function getDateTimeToDate( _dt ) {
 
 // input date, time and combined 2 to 1 data object
 function getDateAndTimeToObject( _d, _t ){
-    // make sure _d and _t are date object
-    let yr = _d.getFullYear();
-    // no need to add one for month
-    let mon = _d.getMonth();
-    let dy = _d.getDate();
-    let hr = _t.getHours();
-    let min = _t.getMinutes();
-    let dt = new Date(yr, mon, dy, hr, min, 0);
-    // the time zone is 8 hours for hong kong
-    //let TimeZone = 8;
-    //dt.setTime(dt.getTime() + TimeZone * 60 * 60 * 1000);
-    return dt;
+    try {
+        // make sure _d and _t are date object
+        let yr = _d.getFullYear();
+        // no need to add one for month
+        let mon = _d.getMonth();
+        let dy = _d.getDate();
+        let hr = _t.getHours();
+        let min = _t.getMinutes();
+        let dt = new Date(yr, mon, dy, hr, min, 0);
+        // the time zone is 8 hours for hong kong
+        // let TimeZone = 8;
+        // dt.setTime(dt.getTime() + TimeZone * 60 * 60 * 1000);
+        return dt;
+    } catch (error) {
+        console.log("getDateAndTimeToObject: \n" + error);
+        return new Date(1970, 1, 1, 0, 0, 0);
+    }    
 }
 // input string in format "yyyy/MM/dd HH:mm" to date object 
 function getDateFromString( str ) {
@@ -108,7 +127,5 @@ function leadingZero( input ) {
     }
     return input;
 }
-
-
 
 export { getDate4Shown, getTime4Shown, getDateTimeToString, getDateAndTimeToObject, getDateFromString, getNowAtZero }
