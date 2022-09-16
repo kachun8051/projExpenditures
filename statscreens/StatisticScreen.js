@@ -168,6 +168,16 @@ const StatisticScreen = ( {navigation} ) => {
     );
   };
 
+  if (globalUsername == '') {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.paragraph}>
+          Please login!!!
+        </Text>
+      </View>  
+    );
+  } 
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -208,5 +218,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     padding: 16,
     marginTop: 16,
+  },
+  paragraph: {
+    margin: 24,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });

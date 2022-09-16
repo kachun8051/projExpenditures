@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, } from 'react-native';
 import { Alert } from 'react-native';
 import { useContext } from 'react';
 import { Parse } from 'parse/react-native';
@@ -228,11 +228,15 @@ const ExptypesScreen = ( { navigation } ) => {
       if (loading === false) {
         //console.log("Length of data: " + queryResults.length);
         return (
-          <View style={styles.container}>            
+          <View style={styles.container}>  
+            {loading ? <ActivityIndicator /> : null}          
             <FlatList
               data={queryResults}
               renderItem={renderItem}
               keyExtractor={(item) => item.objectId}
+              refreshControl={
+                <RefreshControl refreshing={loading} onRefresh={QueryExpTypes} />
+              }
             />
           </View>
         );
